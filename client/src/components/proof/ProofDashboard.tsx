@@ -89,7 +89,7 @@ export const ProofDashboard: React.FC<ProofDashboardProps> = ({ showToast }) => 
   if (loading) {
     return (
       <div className="p-8 text-center text-slate-500">
-        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+        <div className="w-6 h-6 border-2 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
         <p className="text-xs">Computing proof calculations...</p>
       </div>
     );
@@ -97,27 +97,78 @@ export const ProofDashboard: React.FC<ProofDashboardProps> = ({ showToast }) => 
 
   return (
     <div className="space-y-6 text-xs">
-      {/* Proof Header Banner */}
-      <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <Award className="w-5 h-5 text-blue-600" />
-            <h2 className="text-base font-bold text-slate-900">Module C — PROOF Verification Suite</h2>
-            <Badge variant="simulation">EVIDENCE INTEGRITY OK</Badge>
+      {/* PROOF Official Framework Banner */}
+      <div className="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+        {/* Header Bar */}
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-pink-500/10 via-rose-500/5 to-white border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-pink-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-pink-500/20">
+              <Award className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900">PROOF — Performance Recording and Outcome Verification Framework</h2>
+                <Badge variant="simulation">VERIFICATION FRAMEWORK</Badge>
+              </div>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                PROOF measures how emergency-response workflows perform and whether corrective changes improve their results. It records incident events, SAFETEST AI test results, completed steps, acknowledgement times, and previously identified weaknesses.
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Maintain auditable records, compare test runs, measure performance, and verify whether identified procedural weaknesses have been eradicated.
-          </p>
+
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExportAuditDossier}
+            icon={<Download className="w-3.5 h-3.5" />}
+            className="shrink-0"
+          >
+            Export Audit Dossier
+          </Button>
         </div>
 
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={handleExportAuditDossier}
-          icon={<Download className="w-3.5 h-3.5" />}
-        >
-          Export Audit Dossier
-        </Button>
+        {/* Core Purpose & Methodology Details */}
+        <div className="p-4 sm:p-5 space-y-3 bg-white text-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+            {/* Main Purpose Card */}
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+              <div className="flex items-center gap-1.5 text-pink-700 font-bold">
+                <Scale className="w-4 h-4 text-pink-600 shrink-0" />
+                <span>Main Purpose:</span>
+              </div>
+              <p className="text-slate-700 leading-relaxed text-[11px]">
+                Provide <strong>measurable evidence</strong> of whether a tested emergency-response procedure has improved, <strong>rather than simply claiming that a change was successful</strong>.
+              </p>
+              <p className="text-slate-600 leading-relaxed text-[11px]">
+                The system compares results from comparable tests conducted before and after a corrective change. It highlights which requirements passed, which failures remain, and whether new problems appeared. It also maintains an audit trail so that results can be reviewed and verified.
+              </p>
+            </div>
+
+            {/* Practical Example Box */}
+            <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200/80 space-y-2">
+              <div className="flex items-center gap-1.5 text-emerald-900 font-bold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Verification Example:</span>
+              </div>
+              <p className="text-emerald-950/90 leading-relaxed text-[11px]">
+                An initial test shows that a backup responder is not assigned when the primary responder is unavailable. After the fallback rule is corrected, PROOF compares the original and repeat test results to show whether the assignment now succeeds and the required steps are completed.
+              </p>
+            </div>
+          </div>
+
+          {/* Key Output Bar */}
+          <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 text-[11px]">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-slate-700">Key Output:</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Test history</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Performance metrics</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Before-and-after comparisons</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Audit records</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Evidence of verified improvements</span>
+            </div>
+            <span className="text-[10px] text-slate-400 font-mono">Immutable Evidence Ledger</span>
+          </div>
+        </div>
       </div>
 
       {/* Proof Metric Cards */}
@@ -230,7 +281,7 @@ export const ProofDashboard: React.FC<ProofDashboardProps> = ({ showToast }) => 
       {/* Side-by-Side Comparison Section */}
       <div className="pt-2">
         <div className="flex items-center gap-2 mb-3">
-          <Scale className="w-4 h-4 text-blue-600" />
+          <Scale className="w-4 h-4 text-pink-600" />
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
             Before-and-After Audit Comparison Engine
           </h3>

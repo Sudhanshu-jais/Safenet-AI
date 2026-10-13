@@ -7,8 +7,8 @@ async function analyzeIncidentReport(title, description, locationName, zone) {
     // If Gemini API Key is configured, attempt real Gemini call
     if (config_js_1.config.geminiApiKey) {
         try {
-            const prompt = `You are SAFENET AI's incident triage assistant.
-Analyze the following public safety incident report. Do not assess individual guilt, criminality, or predict future behavior. Focus solely on emergency operational response triage.
+            const prompt = `You are SAFENET AI's Women Safety Emergency Triage Assistant.
+Analyze the following women safety incident/distress report. Focus strictly on rapid emergency response triage, responder dispatch, and immediate protective safeguards.
 
 Incident Title: ${title}
 Description: ${description}
@@ -16,12 +16,12 @@ Location: ${locationName} (Zone: ${zone})
 
 Respond ONLY with valid JSON in this exact structure:
 {
-  "summary": "Concise 1-2 sentence operational summary",
-  "suggested_category": "MEDICAL_FIRST_AID" | "SECURITY_DISRUPTION" | "INFRASTRUCTURE_HAZARD" | "FIRE_SMOKE_ALARM" | "CROWD_SURGE",
+  "summary": "Concise 1-2 sentence operational summary highlighting immediate safety risk",
+  "suggested_category": "STALKING_HARASSMENT" | "SAFE_ESCORT_REQUEST" | "CAB_TRANSIT_EMERGENCY" | "IMMEDIATE_ASSAULT_SOS" | "UNSAFE_ENVIRONMENT" | "MEDICAL_FIRST_AID" | "SECURITY_DISRUPTION",
   "suggested_priority": "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
-  "missing_information": ["List of critical operational details not mentioned that responders might need"],
-  "reasoning": "Brief explanation for the category and priority assignment",
-  "confidence": 0.85
+  "missing_information": ["List of critical operational details needed for dispatch (e.g. vehicle plate, moving vs static, physical description)"],
+  "reasoning": "Brief explanation for the category and priority assignment based on immediate threat level",
+  "confidence": 0.90
 }`;
             const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${config_js_1.config.geminiApiKey}`, {
                 method: 'POST',
@@ -38,10 +38,10 @@ Respond ONLY with valid JSON in this exact structure:
                     const parsed = JSON.parse(text);
                     return {
                         summary: parsed.summary || title,
-                        suggested_category: parsed.suggested_category || 'INFRASTRUCTURE_HAZARD',
-                        suggested_priority: parsed.suggested_priority || 'MEDIUM',
+                        suggested_category: parsed.suggested_category || 'STALKING_HARASSMENT',
+                        suggested_priority: parsed.suggested_priority || 'HIGH',
                         missing_information: Array.isArray(parsed.missing_information) ? parsed.missing_information : [],
-                        reasoning: parsed.reasoning || 'Derived via Gemini operational analysis.',
+                        reasoning: parsed.reasoning || 'Derived via Gemini operational women safety triage.',
                         source: 'GEMINI_AI',
                         confidence: parsed.confidence || 0.9,
                     };
@@ -57,48 +57,72 @@ Respond ONLY with valid JSON in this exact structure:
 }
 function runRuleBasedIncidentAnalysis(title, description, zone) {
     const text = `${title} ${description}`.toLowerCase();
-    let category = 'INFRASTRUCTURE_HAZARD';
-    let priority = 'MEDIUM';
+    let category = 'STALKING_HARASSMENT';
+    let priority = 'HIGH';
     const missing = [];
-    let reasoning = 'Evaluated using operational keyword taxonomy rules.';
-    if (text.includes('fire') || text.includes('smoke') || text.includes('alarm') || text.includes('burning')) {
+    let reasoning = 'Evaluated using Women Safety operational keyword taxonomy.';
+    // 1. Immediate Assault / Physical Threat
+    if (text.includes('assault') || text.includes('attack') || text.includes('scream') || text.includes('violence') || text.includes('grab') || text.includes('weapon') || text.includes('danger')) {
+        category = 'IMMEDIATE_ASSAULT_SOS';
+        priority = 'CRITICAL';
+        reasoning = 'Physical assault or violent threat indicators warrant immediate critical Pink Patrol & QRT dispatch.';
+    }
+    // 2. Cab / Transit Deviation Distress
+    else if (text.includes('cab') || text.includes('taxi') || text.includes('uber') || text.includes('ola') || text.includes('auto') || text.includes('driver') || text.includes('route') || text.includes('deviation') || text.includes('locked')) {
+        category = 'CAB_TRANSIT_EMERGENCY';
+        priority = 'CRITICAL';
+        reasoning = 'Suspicious cab/transit deviation detected. High abduction/assault risk; immediate intercept dispatch required.';
+    }
+    // 3. Stalking / Harassment / Following
+    else if (text.includes('stalk') || text.includes('follow') || text.includes('harass') || text.includes('eve-teas') || text.includes('catcall') || text.includes('pursu') || text.includes('shadow')) {
+        category = 'STALKING_HARASSMENT';
+        priority = text.includes('corner') || text.includes('dark') ? 'CRITICAL' : 'HIGH';
+        reasoning = 'Active stalking or harassment behavior detected; fast intercept and field verification initiated.';
+    }
+    // 4. Safe Escort Request
+    else if (text.includes('escort') || text.includes('alone') || text.includes('night walk') || text.includes('walk home') || text.includes('hostel') || text.includes('companion') || text.includes('desolate')) {
+        category = 'SAFE_ESCORT_REQUEST';
+        priority = 'HIGH';
+        reasoning = 'Lone commuter night escort request registered; assigning nearest standby female marshal or patrol officer.';
+    }
+    // 5. Unsafe Environment / Dark Corridor
+    else if (text.includes('dark') || text.includes('broken light') || text.includes('streetlight') || text.includes('no cctv') || text.includes('dim') || text.includes('hazard') || text.includes('blind spot')) {
+        category = 'UNSAFE_ENVIRONMENT';
+        priority = 'MEDIUM';
+        reasoning = 'Environmental vulnerability identified; facilities work order and increased patrol frequency flagged.';
+    }
+    // 6. Generic emergency fallbacks for test compatibility
+    else if (text.includes('fire') || text.includes('smoke') || text.includes('alarm')) {
         category = 'FIRE_SMOKE_ALARM';
         priority = 'CRITICAL';
-        reasoning = 'Smoke/fire indicators warrant immediate critical response.';
+        reasoning = 'Smoke/fire indicators warrant critical response.';
     }
-    else if (text.includes('blood') || text.includes('unconscious') || text.includes('injury') || text.includes('slip') || text.includes('fall') || text.includes('paramedic')) {
+    else if (text.includes('blood') || text.includes('unconscious') || text.includes('injury') || text.includes('fall')) {
         category = 'MEDICAL_FIRST_AID';
-        priority = text.includes('unconscious') || text.includes('severe') ? 'CRITICAL' : 'MEDIUM';
-        reasoning = 'Medical terms detected; triage priority set based on injury severity keywords.';
-    }
-    else if (text.includes('fight') || text.includes('assault') || text.includes('trespass') || text.includes('weapon') || text.includes('theft')) {
-        category = 'SECURITY_DISRUPTION';
-        priority = text.includes('weapon') ? 'CRITICAL' : 'HIGH';
-        reasoning = 'Security disruption pattern identified.';
-    }
-    else if (text.includes('stampede') || text.includes('crowd') || text.includes('bottleneck') || text.includes('surge')) {
-        category = 'CROWD_SURGE';
         priority = 'HIGH';
-        reasoning = 'Crowd density and flow disruption detected.';
+        reasoning = 'Medical terms detected; triage priority set based on injury severity.';
     }
-    // Missing information heuristics
+    // Missing information heuristics for Women Safety operations
     if (!zone || zone.trim() === '') {
-        missing.push('Precise indoor zone / quadrant number not specified');
+        missing.push('Precise sector zone or nearest landmark / exit gate not specified');
     }
-    if (!text.includes('number') && !text.includes('people') && !text.includes('person') && !text.includes('commuter')) {
-        missing.push('Estimated count of affected individuals not provided');
+    if (category === 'CAB_TRANSIT_EMERGENCY' && !text.includes('plate') && !text.includes('number') && !text.includes('registration')) {
+        missing.push('Cab license plate number or vehicle color/make omitted');
     }
-    if (!text.includes('contact') && !text.includes('phone') && !text.includes('reported by')) {
-        missing.push('On-scene reporting party contact number omitted');
+    if (!text.includes('safe') && !text.includes('shelter') && !text.includes('inside') && !text.includes('moving')) {
+        missing.push('Current caller safety status (sheltered in safe zone vs actively moving in open) not specified');
+    }
+    if (!text.includes('contact') && !text.includes('phone') && !text.includes('number')) {
+        missing.push('Emergency callback phone number omitted');
     }
     return {
-        summary: `${category.replace(/_/g, ' ')} detected at scene. Requires on-site verification.`,
+        summary: `${category.replace(/_/g, ' ')} flagged in Women Safety network. Dispatching nearest patrol team.`,
         suggested_category: category,
         suggested_priority: priority,
         missing_information: missing,
         reasoning,
         source: 'RULE_BASED_FALLBACK',
-        confidence: 0.8,
+        confidence: 0.85,
     };
 }
 async function explainScenarioFailure(scenarioTitle, failedChecks, gaps) {

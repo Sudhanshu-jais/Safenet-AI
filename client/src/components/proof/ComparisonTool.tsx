@@ -93,7 +93,7 @@ export const ComparisonTool: React.FC<ComparisonToolProps> = ({ runs, showToast 
               <select
                 value={runAId}
                 onChange={(e) => setRunAId(e.target.value)}
-                className="w-full text-xs px-2.5 py-2 rounded-lg border border-slate-200 bg-white font-medium focus:ring-2 focus:ring-blue-500"
+                className="w-full text-xs px-2.5 py-2 rounded-lg border border-slate-200 bg-white font-medium focus:ring-2 focus:ring-pink-500"
               >
                 {runs.map((r) => (
                   <option key={r.id} value={r.id}>
@@ -115,7 +115,7 @@ export const ComparisonTool: React.FC<ComparisonToolProps> = ({ runs, showToast 
               <select
                 value={runBId}
                 onChange={(e) => setRunBId(e.target.value)}
-                className="w-full text-xs px-2.5 py-2 rounded-lg border border-slate-200 bg-white font-medium focus:ring-2 focus:ring-blue-500"
+                className="w-full text-xs px-2.5 py-2 rounded-lg border border-slate-200 bg-white font-medium focus:ring-2 focus:ring-pink-500"
               >
                 {runs.map((r) => (
                   <option key={r.id} value={r.id}>
@@ -148,13 +148,13 @@ export const ComparisonTool: React.FC<ComparisonToolProps> = ({ runs, showToast 
             className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
               comparison.metrics.outcome_improved
                 ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
-                : 'bg-blue-50/60 border-blue-200 text-blue-950'
+                : 'bg-pink-50/60 border-pink-200 text-pink-950'
             }`}
           >
             <div className="flex items-center gap-3">
               <div
                 className={`w-10 h-10 rounded-xl text-white flex items-center justify-center shrink-0 ${
-                  comparison.metrics.outcome_improved ? 'bg-emerald-600' : 'bg-blue-600'
+                  comparison.metrics.outcome_improved ? 'bg-emerald-600' : 'bg-pink-600'
                 }`}
               >
                 <Award className="w-6 h-6" />

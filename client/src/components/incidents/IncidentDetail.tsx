@@ -11,7 +11,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Card } from '../common/Card.js';
-import { Badge } from '../common/Badge.js';
+import { Badge, getPriorityBadgeVariant } from '../common/Badge.js';
 import { Button } from '../common/Button.js';
 import { api } from '../../services/api.js';
 import { Incident, IncidentTimelineEntry, Responder, IncidentAnalysis } from '../../types/index.js';
@@ -19,7 +19,8 @@ import { Incident, IncidentTimelineEntry, Responder, IncidentAnalysis } from '..
 interface IncidentDetailProps {
   incidentId: string;
   onClose: () => void;
-  onUpdate: () => void;
+  onUpdate?: () => void;
+  onIncidentUpdated?: () => void;
   showToast: (msg: string, type?: 'success' | 'warning' | 'error') => void;
 }
 
@@ -27,6 +28,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
   incidentId,
   onClose,
   onUpdate,
+  onIncidentUpdated,
   showToast,
 }) => {
   const [incident, setIncident] = useState<Incident | null>(null);
@@ -65,7 +67,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
   if (loading || !incident) {
     return (
       <div className="p-8 text-center text-slate-500">
-        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+        <div className="w-6 h-6 border-2 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
         <p className="text-xs">Loading incident details...</p>
       </div>
     );
@@ -82,7 +84,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
       showToast(`Incident status updated to ${targetStatus}`, 'success');
       setTransitionNotes('');
       await loadData();
-      onUpdate();
+      (onUpdate || onIncidentUpdated)?.();
     } catch (err: any) {
       showToast(err.message, 'error');
     } finally {
@@ -98,7 +100,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
       showToast('Responder successfully assigned and notified', 'success');
       setTransitionNotes('');
       await loadData();
-      onUpdate();
+      (onUpdate || onIncidentUpdated)?.();
     } catch (err: any) {
       showToast(err.message, 'error');
     } finally {
@@ -125,9 +127,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
               {incident.status}
             </Badge>
             <Badge
-              variant={
-                incident.priority === 'CRITICAL' ? 'critical' : incident.priority === 'HIGH' ? 'warning' : 'neutral'
-              }
+              variant={getPriorityBadgeVariant(incident.priority)}
             >
               {incident.priority}
             </Badge>
@@ -154,10 +154,10 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
 
       {/* AI Triage Analysis Card */}
       {aiAnalysis && (
-        <Card className="p-4 border-blue-200/80 bg-blue-50/20">
+        <Card className="p-4 border-pink-200/80 bg-pink-50/20">
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-1.5 text-blue-900 font-bold">
-              <Sparkles className="w-4 h-4 text-blue-600" />
+            <div className="flex items-center gap-1.5 text-pink-900 font-bold">
+              <Sparkles className="w-4 h-4 text-pink-600" />
               <span>AI-Assisted Operational Triage</span>
             </div>
             <div className="flex items-center gap-2">
@@ -174,7 +174,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
               <span className="text-slate-600">{aiAnalysis.summary}</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-blue-100">
+            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-pink-100">
               <div>
                 <span className="font-semibold text-slate-700">Recommended Category:</span>{' '}
                 <span className="text-slate-900 font-medium">{aiAnalysis.suggested_category}</span>
@@ -186,7 +186,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
             </div>
 
             {aiAnalysis.missing_information?.length > 0 && (
-              <div className="pt-2 border-t border-blue-100">
+              <div className="pt-2 border-t border-pink-100">
                 <span className="font-semibold text-amber-800 block mb-1">
                   Missing Operational Context Detected:
                 </span>
@@ -208,7 +208,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
       {/* Responder Assignment Section */}
       <Card className="p-4">
         <h4 className="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-2 flex items-center gap-1.5">
-          <UserCheck className="w-4 h-4 text-blue-600" />
+          <UserCheck className="w-4 h-4 text-pink-600" />
           <span>Responder Assignment & Dispatch</span>
         </h4>
 
@@ -235,7 +235,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
                 <select
                   value={selectedResponderId}
                   onChange={(e) => setSelectedResponderId(e.target.value)}
-                  className="flex-1 text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                 >
                   {eligibleResponders.map((r) => (
                     <option key={r.id} value={r.id}>
@@ -328,7 +328,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
         <div className="space-y-2 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200 pl-6">
           {timeline.map((entry) => (
             <div key={entry.id} className="relative">
-              <span className="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-blue-600 border-2 border-white ring-1 ring-slate-200" />
+              <span className="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-pink-600 border-2 border-white ring-1 ring-slate-200" />
               <div className="text-xs font-semibold text-slate-900">
                 {entry.to_status}
                 {entry.from_status && <span className="text-slate-400 font-normal"> (from {entry.from_status})</span>}

@@ -91,19 +91,66 @@ export const ScenarioList: React.FC<ScenarioListProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Overview Banner */}
-      <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <FlaskConical className="w-5 h-5 text-blue-600" />
-            <h2 className="text-base font-bold text-slate-900">SAFETEST AI — Deterministic Scenario Library</h2>
+      {/* SAFETEST AI Official Framework Banner */}
+      <div className="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+        {/* Header Bar */}
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-pink-500/10 via-rose-500/5 to-white border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-pink-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-pink-500/20">
+              <FlaskConical className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900">SAFETEST AI — Emergency Response Testing Engine</h2>
+                <Badge variant="primary" size="sm">TESTING ENGINE</Badge>
+              </div>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                SAFETEST AI tests whether an organization's emergency-response procedures work when something goes wrong. It simulates situations such as an unavailable responder, communication failure, missed acknowledgement, or failed handoff between teams.
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Test emergency response procedures under controlled failure conditions. All tests run deterministically against backend dispatch logic without modifying real records.
-          </p>
         </div>
-        <div className="text-[11px] text-slate-500 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
-          <span>Engine Authority: <strong className="text-slate-800">Deterministic Logic</strong></span>
+
+        {/* Core Purpose & Methodology Details */}
+        <div className="p-4 sm:p-5 space-y-3 bg-white text-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+            {/* Main Purpose Card */}
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+              <div className="flex items-center gap-1.5 text-pink-700 font-bold">
+                <Sparkles className="w-4 h-4 text-pink-600 shrink-0" />
+                <span>Main Purpose:</span>
+              </div>
+              <p className="text-slate-700 leading-relaxed text-[11px]">
+                Find weaknesses in emergency-response procedures <strong>before those weaknesses affect real incidents</strong>.
+              </p>
+              <p className="text-slate-600 leading-relaxed text-[11px]">
+                The system executes predefined test scenarios, checks whether required steps are completed, identifies procedural weaknesses, and uses AI to explain failures and recommend possible improvements. After changes are made, the same scenario can be run again to verify whether the identified weakness has been fixed.
+              </p>
+            </div>
+
+            {/* Practical Example Box */}
+            <div className="p-3.5 rounded-xl bg-pink-50/60 border border-pink-200/80 space-y-2">
+              <div className="flex items-center gap-1.5 text-pink-900 font-bold">
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                <span>Operational Example:</span>
+              </div>
+              <p className="text-pink-950/90 leading-relaxed text-[11px]">
+                If the primary responder is unavailable, SAFETEST AI checks whether the system follows its configured fallback procedure and assigns an eligible alternative. If the procedure fails, it identifies the failed step and allows the corrected workflow to be tested again.
+              </p>
+            </div>
+          </div>
+
+          {/* Key Output Bar */}
+          <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 text-[11px]">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-slate-700">Key Output:</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Test results</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Failed checks</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Identified weaknesses</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-medium text-slate-700">Repeatable verification scenarios</span>
+            </div>
+            <span className="text-[10px] text-slate-400 font-mono">100% Deterministic Engine Execution</span>
+          </div>
         </div>
       </div>
 
@@ -118,7 +165,7 @@ export const ScenarioList: React.FC<ScenarioListProps> = ({
           const recentRun = runs.find(r => r.scenario_id === scen.id);
 
           return (
-            <Card key={scen.id} className="p-4 flex flex-col justify-between hover:border-blue-200 transition-colors">
+            <Card key={scen.id} className="p-4 flex flex-col justify-between hover:border-pink-300 transition-colors">
               <div>
                 {/* Header: Title, Category, Version */}
                 <div className="flex items-start justify-between gap-2 mb-2">
@@ -234,7 +281,7 @@ export const ScenarioList: React.FC<ScenarioListProps> = ({
                 value={ruleVersion}
                 onChange={(e) => setRuleVersion(e.target.value)}
                 placeholder="e.g. v1.0 or v2.0"
-                className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500 font-mono"
               />
             </div>
 
@@ -249,7 +296,7 @@ export const ScenarioList: React.FC<ScenarioListProps> = ({
                     onChange={(e) =>
                       setRuleConfig({ ...ruleConfig, auto_fallback_enabled: e.target.checked })
                     }
-                    className="rounded text-blue-600"
+                    className="rounded text-pink-600 focus:ring-pink-500"
                   />
                   <span>
                     <strong>auto_fallback_enabled</strong> (Cascade to secondary unit if primary is offline)
@@ -263,7 +310,7 @@ export const ScenarioList: React.FC<ScenarioListProps> = ({
                     onChange={(e) =>
                       setRuleConfig({ ...ruleConfig, supervisor_alert: e.target.checked })
                     }
-                    className="rounded text-blue-600"
+                    className="rounded text-pink-600 focus:ring-pink-500"
                   />
                   <span>
                     <strong>supervisor_alert</strong> (Transmit alert to supervisor console)
@@ -271,7 +318,7 @@ export const ScenarioList: React.FC<ScenarioListProps> = ({
                 </label>
 
                 <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-200">
-                  <span className="font-semibold text-blue-700">Demonstration Guide:</span> Set to <code>false</code> to trigger deterministic failure (Rule v1.0), then set to <code>true</code> (Rule v2.0) to prove remediation!
+                  <span className="font-semibold text-pink-700">Demonstration Guide:</span> Set to <code>false</code> to trigger deterministic failure (Rule v1.0), then set to <code>true</code> (Rule v2.0) to prove remediation!
                 </div>
               </div>
             )}

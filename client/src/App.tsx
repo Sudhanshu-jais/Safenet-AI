@@ -12,6 +12,7 @@ import { ProofDashboard } from './components/proof/ProofDashboard.js';
 import { CorrectiveList } from './components/corrective/CorrectiveList.js';
 import { AuditHistoryView } from './components/audit/AuditHistoryView.js';
 import { SettingsView } from './components/settings/SettingsView.js';
+import { CitizenPhoneView } from './components/citizen/CitizenPhoneView.js';
 import { ScenarioRun } from './types/index.js';
 
 export const AppContent: React.FC = () => {
@@ -49,12 +50,17 @@ export const AppContent: React.FC = () => {
         <Topbar
           currentTab={currentTab}
           onOpenSidebar={() => setSidebarOpen(true)}
+          onSelectTab={setCurrentTab}
           showToast={showToast}
         />
 
         <main className="flex-1 p-4 md:p-6 max-w-7xl w-full mx-auto">
           {currentTab === 'overview' && (
             <OverviewDashboard onNavigate={setCurrentTab} showToast={showToast} />
+          )}
+
+          {currentTab === 'citizen' && (
+            <CitizenPhoneView showToast={showToast} onNavigate={setCurrentTab} />
           )}
 
           {currentTab === 'incidents' && (

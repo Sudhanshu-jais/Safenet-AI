@@ -100,7 +100,7 @@ export const ScenarioRunner: React.FC<ScenarioRunnerProps> = ({
       <Card className="p-4 space-y-3">
         <div className="flex items-center justify-between pb-2 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <FlaskConical className="w-4 h-4 text-blue-600" />
+            <FlaskConical className="w-4 h-4 text-pink-600" />
             <h4 className="font-bold text-slate-900 uppercase tracking-wider text-[11px]">
               Deterministic Verification Checks ({run.passed_checks}/{run.total_checks} Satisfied)
             </h4>
@@ -170,16 +170,16 @@ export const ScenarioRunner: React.FC<ScenarioRunnerProps> = ({
 
       {/* AI Diagnostic Explanation */}
       {aiExplanation && (
-        <Card className="p-4 border-blue-200 bg-blue-50/20">
+        <Card className="p-4 border-pink-200 bg-pink-50/20">
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 text-blue-900 font-bold text-xs">
-              <Sparkles className="w-4 h-4 text-blue-600" />
+            <div className="flex items-center gap-2 text-pink-900 font-bold text-xs">
+              <Sparkles className="w-4 h-4 text-pink-600" />
               <span>AI Operational Diagnosis</span>
             </div>
             <Badge variant="neutral" size="sm">{aiExplanation.source}</Badge>
           </div>
           <p className="text-slate-700 mb-2 leading-relaxed">{aiExplanation.summary}</p>
-          <div className="pt-2 border-t border-blue-100 flex flex-col sm:flex-row gap-3">
+          <div className="pt-2 border-t border-pink-100 flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <span className="font-semibold text-slate-600 block text-[10px] uppercase">Root Cause:</span>
               <span className="text-slate-800">{aiExplanation.root_cause}</span>

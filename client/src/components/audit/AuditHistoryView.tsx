@@ -41,7 +41,7 @@ export const AuditHistoryView: React.FC<AuditHistoryProps> = ({ showToast }) => 
       <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <History className="w-5 h-5 text-blue-600" />
+            <History className="w-5 h-5 text-pink-600" />
             <h2 className="text-base font-bold text-slate-900">Append-Only Audit Journal</h2>
             <Badge variant="simulation">IMMUTABLE LOG</Badge>
           </div>
@@ -80,7 +80,7 @@ export const AuditHistoryView: React.FC<AuditHistoryProps> = ({ showToast }) => 
       <Card className="overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-slate-500">
-            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="w-6 h-6 border-2 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
             <p className="text-xs">Fetching audit journal entries...</p>
           </div>
         ) : logs.length === 0 ? (

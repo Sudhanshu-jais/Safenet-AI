@@ -158,7 +158,7 @@ export const CorrectiveList: React.FC<CorrectiveListProps> = ({
       <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <ClipboardCheck className="w-5 h-5 text-blue-600" />
+            <ClipboardCheck className="w-5 h-5 text-pink-600" />
             <h2 className="text-base font-bold text-slate-900">Corrective Action Management</h2>
             <Badge variant="simulation">CLOSED-LOOP REMEDIATION</Badge>
           </div>
@@ -194,7 +194,7 @@ export const CorrectiveList: React.FC<CorrectiveListProps> = ({
       <div className="space-y-3">
         {loading ? (
           <div className="p-8 text-center text-slate-500">
-            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="w-6 h-6 border-2 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
             <p className="text-xs">Loading corrective actions...</p>
           </div>
         ) : actions.length === 0 ? (
@@ -300,7 +300,7 @@ export const CorrectiveList: React.FC<CorrectiveListProps> = ({
                   <span>Owner: <strong className="text-slate-700">{ca.owner}</strong></span>
                   <span>•</span>
                   <span>
-                    Verification Benchmark: <strong className="text-blue-700">{ca.verification_scenario_title || ca.verification_scenario_id}</strong>
+                    Verification Benchmark: <strong className="text-pink-700">{ca.verification_scenario_title || ca.verification_scenario_id}</strong>
                   </span>
                 </div>
                 {ca.verified_at && (
@@ -330,7 +330,7 @@ export const CorrectiveList: React.FC<CorrectiveListProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Implement automated fallback responder trigger"
-              className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
               required
             />
           </div>
@@ -342,7 +342,7 @@ export const CorrectiveList: React.FC<CorrectiveListProps> = ({
               value={weakness}
               onChange={(e) => setWeakness(e.target.value)}
               placeholder="Describe the gap detected during testing..."
-              className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
               required
             />
           </div>
@@ -354,7 +354,7 @@ export const CorrectiveList: React.FC<CorrectiveListProps> = ({
               value={proposedRemedy}
               onChange={(e) => setProposedRemedy(e.target.value)}
               placeholder="Operational rule change or escalation policy update..."
-              className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
               required
             />
           </div>
@@ -421,9 +421,9 @@ export const CorrectiveList: React.FC<CorrectiveListProps> = ({
       >
         {verifyingAction && (
           <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 text-blue-950">
+            <div className="p-3 rounded-lg bg-pink-50 border border-pink-200 text-pink-950">
               <span className="font-bold block text-xs">Target Scenario Required:</span>
-              <span className="text-[11px] font-medium text-blue-800">
+              <span className="text-[11px] font-medium text-pink-800">
                 {verifyingAction.verification_scenario_title || verifyingAction.verification_scenario_id}
               </span>
             </div>
