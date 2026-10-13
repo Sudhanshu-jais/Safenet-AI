@@ -7,8 +7,8 @@
     "dev": "node scripts/dev.js",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
-    "build:client": "npm --prefix client run build",
-    "build:server": "npm --prefix server run build",
+    "build:client": "npm --prefix client install && npm --prefix client run build",
+    "build:server": "npm --prefix server install && npm --prefix server run build",
     "test": "npm --prefix server run test"
   },
   "dependencies": {
@@ -16,6 +16,9 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "sql.js": "^1.14.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=20.x"
