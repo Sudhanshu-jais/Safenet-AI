@@ -177,7 +177,7 @@ export function updateCorrectiveActionStatus(
     UPDATE corrective_actions 
     SET status = ?, verification_run_id = ?, notes = COALESCE(?, notes), verified_at = ?, verified_by = ?, updated_at = ?
     WHERE id = ?
-  `).run(targetStatus, linkedRunId, notes, verifiedAt, verifiedBy, now, id);
+  `).run(targetStatus, linkedRunId ?? null, notes ?? null, verifiedAt ?? null, verifiedBy ?? null, now, id);
 
   recordAuditLog({
     actorId,

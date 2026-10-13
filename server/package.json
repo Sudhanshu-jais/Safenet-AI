@@ -2,12 +2,15 @@
   "name": "safenet-server",
   "version": "1.0.0",
   "description": "SAFENET AI Backend - Public Safety Intelligence & Response Verification Network",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "tsx src/index.ts",
+    "start": "node dist/index.js",
     "test": "tsx ../tests/test-suite.ts"
+  },
+  "engines": {
+    "node": ">=22.x"
   },
   "dependencies": {
     "cors": "^2.8.5",

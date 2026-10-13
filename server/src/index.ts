@@ -44,9 +44,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-export const server = app.listen(config.port, () => {
-  console.log(`[SAFENET AI] Server running on port ${config.port} (env: ${config.nodeEnv})`);
-  console.log(`[SAFENET AI] Database initialized at: ${config.dbPath}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(config.port, () => {
+    console.log(`[SAFENET AI] Server running on port ${config.port} (env: ${config.nodeEnv})`);
+    console.log(`[SAFENET AI] Database initialized at: ${config.dbPath}`);
+  });
+}
 
 export default app;

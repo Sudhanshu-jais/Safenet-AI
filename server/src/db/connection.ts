@@ -18,9 +18,13 @@ export function getDatabase(): DatabaseSync {
 
   dbInstance = new DatabaseSync(config.dbPath);
   
-  // Enable foreign keys and WAL mode for performance & concurrency
+  // Enable foreign keys and WAL mode (or DELETE mode on constrained filesystems)
   dbInstance.exec('PRAGMA foreign_keys = ON;');
-  dbInstance.exec('PRAGMA journal_mode = WAL;');
+  try {
+    dbInstance.exec('PRAGMA journal_mode = WAL;');
+  } catch {
+    dbInstance.exec('PRAGMA journal_mode = DELETE;');
+  }
 
   return dbInstance;
 }
