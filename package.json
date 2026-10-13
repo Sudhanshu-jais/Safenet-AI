@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "SAFENET AI — Public Safety Intelligence & Response Verification Network",
   "scripts": {
+    "build": "npm run build:server && npm run build:client",
     "dev": "node scripts/dev.js",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
@@ -10,8 +11,14 @@
     "build:server": "npm --prefix server run build",
     "test": "npm --prefix server run test"
   },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "sql.js": "^1.14.2"
+  },
   "engines": {
-    "node": "22.x"
+    "node": ">=20.x"
   },
   "keywords": [
     "public-safety",

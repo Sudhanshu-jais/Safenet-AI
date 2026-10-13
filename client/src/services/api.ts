@@ -25,7 +25,10 @@ export function getActiveRole(): UserRole {
   return activeRole;
 }
 
+const API_BASE = (import.meta as any).env?.VITE_API_URL?.replace(/\/$/, '') || '';
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
   const headers = {
     'Content-Type': 'application/json',
     'x-user-role': activeRole,
@@ -35,13 +38,13 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
   let response: Response;
   try {
-    response = await fetch(endpoint, {
+    response = await fetch(url, {
       ...options,
       headers,
     });
   } catch (err: any) {
-    console.error(`[API Network Error] ${options.method || 'GET'} ${endpoint}:`, err);
-    throw new Error(`Network connection error to ${endpoint}: ${err.message || 'Failed to fetch'}`);
+    console.error(`[API Network Error] ${options.method || 'GET'} ${url}:`, err);
+    throw new Error(`Network connection error to ${url}: ${err.message || 'Failed to fetch'}`);
   }
 
   const rawText = await response.text();
