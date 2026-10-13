@@ -6,7 +6,7 @@ dotenv.config();
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
-  dbPath: process.env.DATABASE_PATH || path.resolve(process.cwd(), '../data/safenet.db'),
+  dbPath: process.env.DATABASE_PATH || (process.env.VERCEL ? '/tmp/safenet.db' : path.resolve(process.cwd(), '../data/safenet.db')),
   geminiApiKey: process.env.GEMINI_API_KEY || '',
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  corsOrigin: process.env.CORS_ORIGIN || '*',
 };
