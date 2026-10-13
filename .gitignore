@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Production builds
+dist/
+dist-ssr/
+*.local
+
+# Environment variables
+.env
+.env*.local
+
+# Local SQLite databases (prevent committing runtime binary locks)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+!data/.gitkeep
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+Thumbs.db
