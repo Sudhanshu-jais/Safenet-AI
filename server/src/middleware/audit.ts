@@ -25,8 +25,8 @@ export function recordAuditLog(entry: AuditLogEntry): void {
     stmt.run(
       id,
       timestamp,
-      entry.actorId,
-      entry.actorRole,
+      entry.actorId || 'system',
+      entry.actorRole || 'SYSTEM',
       entry.actionType,
       entry.entityType,
       entry.entityId,

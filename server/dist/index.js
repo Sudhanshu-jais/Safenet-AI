@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const config_js_1 = require("./config.js");
-const schema_js_1 = require("./db/schema.js");
-const seed_js_1 = require("./db/seed.js");
+const connection_js_1 = require("./db/connection.js");
 const auth_js_1 = require("./middleware/auth.js");
 const incidents_js_1 = __importDefault(require("./routes/incidents.js"));
 const responders_js_1 = __importDefault(require("./routes/responders.js"));
@@ -23,15 +22,21 @@ app.use((0, cors_1.default)({
 }));
 app.use(express_1.default.json());
 app.use(auth_js_1.authMiddleware);
-// Initialize DB schema & default scenarios safely
-try {
-    (0, schema_js_1.initializeSchema)();
-    (0, seed_js_1.seedInitialScenarios)();
-    console.log('[SAFENET AI] Database schema initialized and seeded successfully.');
-}
-catch (err) {
-    console.error('[SAFENET AI] DB initialization warning:', err);
-}
+// Ensure database is fully initialized and seeded before handling API requests
+app.use(async (_req, res, next) => {
+    try {
+        await (0, connection_js_1.ensureDatabaseReady)();
+        next();
+    }
+    catch (err) {
+        console.error('[SAFENET AI DB Initialization Error]', err);
+        res.status(500).json({ error: 'Database initialization failed', message: err?.message || String(err) });
+    }
+});
+// Immediately trigger initialization in background for fast cold starts
+(0, connection_js_1.ensureDatabaseReady)().catch((err) => {
+    console.warn('[SAFENET AI Startup DB Note]', err);
+});
 // Mount API routes (supporting both /api/* and /* for Vercel service rewrites)
 const routerMap = [
     { path: 'incidents', router: incidents_js_1.default },

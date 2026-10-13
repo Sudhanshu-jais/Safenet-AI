@@ -15,7 +15,7 @@ function recordAuditLog(entry) {
       INSERT INTO audit_logs (id, timestamp, actor_id, actor_role, action_type, entity_type, entity_id, details_json)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
-        stmt.run(id, timestamp, entry.actorId, entry.actorRole, entry.actionType, entry.entityType, entry.entityId, JSON.stringify(entry.details));
+        stmt.run(id, timestamp, entry.actorId || 'system', entry.actorRole || 'SYSTEM', entry.actionType, entry.entityType, entry.entityId, JSON.stringify(entry.details));
     }
     catch (err) {
         console.error('Failed to write audit log:', err);

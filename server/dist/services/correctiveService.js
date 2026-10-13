@@ -28,8 +28,8 @@ function createCorrectiveAction(data) {
   `);
     insertStmt.run(id, data.title, data.weakness_description, data.source_run_id || null, data.proposed_remedy, data.owner, priority, data.due_date || null, 'OPEN', data.verification_scenario_id, 'Created from operational weakness evaluation.', now, now);
     (0, audit_js_1.recordAuditLog)({
-        actorId: data.actorId,
-        actorRole: data.actorRole,
+        actorId: data.actorId || 'system',
+        actorRole: data.actorRole || 'SYSTEM',
         actionType: 'CORRECTIVE_ACTION_CREATED',
         entityType: 'CORRECTIVE_ACTION',
         entityId: id,

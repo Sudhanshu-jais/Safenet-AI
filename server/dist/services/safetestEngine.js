@@ -47,7 +47,7 @@ function updateScenarioRuleConfig(id, ruleVersion, newConfig, actorId, actorRole
     });
     return getScenarioById(id);
 }
-async function executeScenario(scenarioId, actorId, actorRole) {
+async function executeScenario(scenarioId, actorId = 'system', actorRole = 'SYSTEM') {
     const db = (0, connection_js_1.getDatabase)();
     const scenario = getScenarioById(scenarioId);
     if (!scenario) {

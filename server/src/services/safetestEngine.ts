@@ -91,8 +91,8 @@ export function updateScenarioRuleConfig(
 
 export async function executeScenario(
   scenarioId: string,
-  actorId: string,
-  actorRole: string
+  actorId: string = 'system',
+  actorRole: string = 'SYSTEM'
 ): Promise<ScenarioRun> {
   const db = getDatabase();
   const scenario = getScenarioById(scenarioId);

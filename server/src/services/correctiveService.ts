@@ -35,8 +35,8 @@ export function createCorrectiveAction(data: {
   priority?: CorrectiveActionPriority;
   due_date?: string;
   verification_scenario_id: string;
-  actorId: string;
-  actorRole: string;
+  actorId?: string;
+  actorRole?: string;
 }): CorrectiveAction {
   const db = getDatabase();
 
@@ -73,8 +73,8 @@ export function createCorrectiveAction(data: {
   );
 
   recordAuditLog({
-    actorId: data.actorId,
-    actorRole: data.actorRole,
+    actorId: data.actorId || 'system',
+    actorRole: data.actorRole || 'SYSTEM',
     actionType: 'CORRECTIVE_ACTION_CREATED',
     entityType: 'CORRECTIVE_ACTION',
     entityId: id,
