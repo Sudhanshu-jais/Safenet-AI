@@ -10,7 +10,7 @@
     "test": "npm --prefix server run test"
   },
   "engines": {
-    "node": ">=22.x"
+    "node": "22.x"
   },
   "keywords": [
     "public-safety",

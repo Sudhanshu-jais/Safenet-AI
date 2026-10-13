@@ -33,12 +33,31 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     ...(options.headers || {}),
   };
 
-  const response = await fetch(endpoint, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      ...options,
+      headers,
+    });
+  } catch (err: any) {
+    console.error(`[API Network Error] ${options.method || 'GET'} ${endpoint}:`, err);
+    throw new Error(`Network connection error to ${endpoint}: ${err.message || 'Failed to fetch'}`);
+  }
 
-  const data = await response.json();
+  const rawText = await response.text();
+  let data: any = {};
+
+  try {
+    data = rawText ? JSON.parse(rawText) : {};
+  } catch {
+    // Non-JSON response (e.g. Vercel plain text/HTML 500 error page)
+    console.warn(`[API Non-JSON Response] ${response.status} from ${endpoint}:`, rawText);
+    if (!response.ok) {
+      throw new Error(`Server returned HTTP ${response.status}: ${rawText.slice(0, 150) || response.statusText}`);
+    }
+    throw new Error(`Expected JSON from ${endpoint}, received: ${rawText.slice(0, 150)}`);
+  }
+
   if (!response.ok) {
     throw new Error(data.error || data.message || `Request failed with status ${response.status}`);
   }
