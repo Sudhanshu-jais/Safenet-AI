@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeSchema = initializeSchema;
 const connection_js_1 = require("./connection.js");
-function initializeSchema() {
-    const db = (0, connection_js_1.getDatabase)();
+function initializeSchema(targetDb) {
+    const db = targetDb || (0, connection_js_1.getDatabase)();
     db.exec(`
     -- Locations
     CREATE TABLE IF NOT EXISTS locations (

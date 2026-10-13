@@ -153,8 +153,8 @@ exports.SCENARIO_DEFINITIONS = [
         }
     }
 ];
-function seedInitialScenarios() {
-    const db = (0, connection_js_1.getDatabase)();
+function seedInitialScenarios(targetDb) {
+    const db = targetDb || (0, connection_js_1.getDatabase)();
     const now = new Date().toISOString();
     const insertStmt = db.prepare(`
     INSERT OR REPLACE INTO scenarios (
@@ -168,11 +168,11 @@ function seedInitialScenarios() {
         insertStmt.run(s.id, s.title, s.description, s.category, s.rule_version, JSON.stringify(s.initial_conditions), JSON.stringify(s.failure_condition), JSON.stringify(s.expected_behavior), JSON.stringify(s.pass_criteria), JSON.stringify(s.active_rule_config), now, now);
     }
 }
-function seedDemoData() {
-    const db = (0, connection_js_1.getDatabase)();
+function seedDemoData(targetDb) {
+    const db = targetDb || (0, connection_js_1.getDatabase)();
     const now = new Date().toISOString();
     // 1. Ensure scenarios exist
-    seedInitialScenarios();
+    seedInitialScenarios(db);
     // 2. Demonstration Locations (3 locations)
     const locStmt = db.prepare(`
     INSERT OR REPLACE INTO locations (id, name, type, zone_count, zones_json, is_simulated, created_at)
@@ -520,8 +520,8 @@ function seedDemoData() {
         }
     };
 }
-function clearDemoData() {
-    const db = (0, connection_js_1.getDatabase)();
+function clearDemoData(targetDb) {
+    const db = targetDb || (0, connection_js_1.getDatabase)();
     db.exec(`
     DELETE FROM audit_logs WHERE actor_id = 'system-seed';
     DELETE FROM corrective_actions WHERE id IN ('ca-001', 'ca-002');

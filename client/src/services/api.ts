@@ -59,8 +59,17 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 
   if (!response.ok) {
-    const errorMsg = data?.error || data?.message || data?.details || (typeof data === 'string' ? data : null);
-    throw new Error(errorMsg ? `[HTTP ${response.status}] ${errorMsg}` : `Request failed with status ${response.status}`);
+    if (!rawText.trim() && (response.status === 500 || response.status === 502 || response.status === 504)) {
+      throw new Error(`[HTTP ${response.status}] Backend server is offline or unreachable. If running locally, please start the backend server on port 3001 using 'npm run dev'.`);
+    }
+
+    const errorObj = data?.error;
+    const errorMsg =
+      (typeof errorObj === 'object' && errorObj !== null)
+        ? (errorObj.message || errorObj.code || JSON.stringify(errorObj))
+        : (errorObj || data?.message || data?.details || (typeof data === 'string' ? data : null));
+
+    throw new Error(errorMsg ? `[HTTP ${response.status}] ${errorMsg}` : `[HTTP ${response.status}] Request failed with status ${response.status}`);
   }
 
   return data as T;

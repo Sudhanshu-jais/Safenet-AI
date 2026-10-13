@@ -1,4 +1,4 @@
-import { getDatabase } from './connection.js';
+import { getDatabase, ISqliteDatabase } from './connection.js';
 
 export const SCENARIO_DEFINITIONS = [
   {
@@ -149,8 +149,8 @@ export const SCENARIO_DEFINITIONS = [
   }
 ];
 
-export function seedInitialScenarios(): void {
-  const db = getDatabase();
+export function seedInitialScenarios(targetDb?: ISqliteDatabase): void {
+  const db = targetDb || getDatabase();
   const now = new Date().toISOString();
 
   const insertStmt = db.prepare(`
@@ -180,12 +180,12 @@ export function seedInitialScenarios(): void {
   }
 }
 
-export function seedDemoData(): { message: string; counts: Record<string, number> } {
-  const db = getDatabase();
+export function seedDemoData(targetDb?: ISqliteDatabase): { message: string; counts: Record<string, number> } {
+  const db = targetDb || getDatabase();
   const now = new Date().toISOString();
 
   // 1. Ensure scenarios exist
-  seedInitialScenarios();
+  seedInitialScenarios(db);
 
   // 2. Demonstration Locations (3 locations)
   const locStmt = db.prepare(`
@@ -672,8 +672,8 @@ export function seedDemoData(): { message: string; counts: Record<string, number
   };
 }
 
-export function clearDemoData(): { message: string } {
-  const db = getDatabase();
+export function clearDemoData(targetDb?: ISqliteDatabase): { message: string } {
+  const db = targetDb || getDatabase();
 
   db.exec(`
     DELETE FROM audit_logs WHERE actor_id = 'system-seed';

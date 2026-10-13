@@ -1,7 +1,7 @@
-import { getDatabase } from './connection.js';
+import { getDatabase, ISqliteDatabase } from './connection.js';
 
-export function initializeSchema(): void {
-  const db = getDatabase();
+export function initializeSchema(targetDb?: ISqliteDatabase): void {
+  const db = targetDb || getDatabase();
 
   db.exec(`
     -- Locations

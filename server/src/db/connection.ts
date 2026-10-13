@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
+import { initializeSchema } from './schema.js';
+import { seedDemoData } from './seed.js';
 
 export interface ISqliteStatement {
   run(...params: any[]): { changes: number; lastInsertRowid: number | bigint };
@@ -151,11 +153,9 @@ export async function ensureDatabaseReady(): Promise<ISqliteDatabase> {
   if (!readyPromise) {
     readyPromise = (async () => {
       const db = await initDatabase();
-      const { initializeSchema } = await import('./schema.js');
-      const { seedDemoData } = await import('./seed.js');
       try {
-        initializeSchema();
-        seedDemoData();
+        initializeSchema(db);
+        seedDemoData(db);
         console.log('[SAFENET AI] Database schema and full Phase-1 operational dataset initialized.');
       } catch (err) {
         console.warn('[SAFENET AI] Schema initialization note:', err);

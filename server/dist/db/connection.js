@@ -10,6 +10,8 @@ exports.closeDatabase = closeDatabase;
 const node_fs_1 = __importDefault(require("node:fs"));
 const node_path_1 = __importDefault(require("node:path"));
 const config_js_1 = require("../config.js");
+const schema_js_1 = require("./schema.js");
+const seed_js_1 = require("./seed.js");
 let dbInstance = null;
 let isReady = false;
 let readyPromise = null;
@@ -145,11 +147,9 @@ async function ensureDatabaseReady() {
     if (!readyPromise) {
         readyPromise = (async () => {
             const db = await initDatabase();
-            const { initializeSchema } = await import('./schema.js');
-            const { seedDemoData } = await import('./seed.js');
             try {
-                initializeSchema();
-                seedDemoData();
+                (0, schema_js_1.initializeSchema)(db);
+                (0, seed_js_1.seedDemoData)(db);
                 console.log('[SAFENET AI] Database schema and full Phase-1 operational dataset initialized.');
             }
             catch (err) {
