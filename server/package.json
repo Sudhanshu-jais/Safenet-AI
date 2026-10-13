@@ -2,7 +2,7 @@
   "name": "safenet-server",
   "version": "1.0.0",
   "description": "SAFENET AI Backend - Public Safety Intelligence & Response Verification Network",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

@@ -6,9 +6,10 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Production builds
-dist/
+client/dist/
 dist-ssr/
 *.local
+!server/dist/**
 
 # Environment variables
 .env
