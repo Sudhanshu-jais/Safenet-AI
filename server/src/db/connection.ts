@@ -152,11 +152,11 @@ export async function ensureDatabaseReady(): Promise<ISqliteDatabase> {
     readyPromise = (async () => {
       const db = await initDatabase();
       const { initializeSchema } = await import('./schema.js');
-      const { seedInitialScenarios } = await import('./seed.js');
+      const { seedDemoData } = await import('./seed.js');
       try {
         initializeSchema();
-        seedInitialScenarios();
-        console.log('[SAFENET AI] Database schema and initial scenarios verified.');
+        seedDemoData();
+        console.log('[SAFENET AI] Database schema and full Phase-1 operational dataset initialized.');
       } catch (err) {
         console.warn('[SAFENET AI] Schema initialization note:', err);
       }

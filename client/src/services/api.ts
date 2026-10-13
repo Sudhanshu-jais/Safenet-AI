@@ -59,7 +59,8 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 
   if (!response.ok) {
-    throw new Error(data.error || data.message || `Request failed with status ${response.status}`);
+    const errorMsg = data?.error || data?.message || data?.details || (typeof data === 'string' ? data : null);
+    throw new Error(errorMsg ? `[HTTP ${response.status}] ${errorMsg}` : `Request failed with status ${response.status}`);
   }
 
   return data as T;

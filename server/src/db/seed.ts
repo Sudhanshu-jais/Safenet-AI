@@ -223,7 +223,7 @@ export function seedDemoData(): { message: string; counts: Record<string, number
     now
   );
 
-  // 3. Simulated Responders (2 responders)
+  // 3. Simulated Responders (6 responders across all locations)
   const respStmt = db.prepare(`
     INSERT OR REPLACE INTO responders (
       id, name, callsign, role, location_id, availability,
@@ -231,46 +231,20 @@ export function seedDemoData(): { message: string; counts: Record<string, number
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  respStmt.run(
-    'resp-security-1',
-    'Alex Rivera',
-    'PATROL-41',
-    'SECURITY',
-    'loc-transit',
-    'AVAILABLE',
-    null,
-    2,
-    1,
-    now
-  );
+  const DEMO_RESPONDERS = [
+    { id: 'resp-security-1', name: 'Alex Rivera', callsign: 'PATROL-41', role: 'SECURITY', loc: 'loc-transit', avail: 'AVAILABLE', max: 2 },
+    { id: 'resp-med-1', name: 'Sam Chen', callsign: 'MEDIC-12', role: 'MEDICAL', loc: 'loc-transit', avail: 'AVAILABLE', max: 1 },
+    { id: 'resp-backup-1', name: 'Elena Rostova', callsign: 'BACKUP-09', role: 'SECURITY', loc: 'loc-transit', avail: 'AVAILABLE', max: 2 },
+    { id: 'resp-campus-1', name: 'Marcus Vance', callsign: 'PATROL-15', role: 'SECURITY', loc: 'loc-campus', avail: 'AVAILABLE', max: 2 },
+    { id: 'resp-campus-2', name: 'Dr. Priya Sharma', callsign: 'FIRST-AID-03', role: 'MEDICAL', loc: 'loc-campus', avail: 'AVAILABLE', max: 1 },
+    { id: 'resp-market-1', name: 'David Miller', callsign: 'PATROL-88', role: 'SECURITY', loc: 'loc-market', avail: 'AVAILABLE', max: 2 },
+  ];
 
-  respStmt.run(
-    'resp-med-1',
-    'Sam Chen',
-    'MEDIC-12',
-    'MEDICAL',
-    'loc-transit',
-    'AVAILABLE',
-    null,
-    1,
-    1,
-    now
-  );
+  for (const r of DEMO_RESPONDERS) {
+    respStmt.run(r.id, r.name, r.callsign, r.role, r.loc, r.avail, null, r.max, 1, now);
+  }
 
-  respStmt.run(
-    'resp-backup-1',
-    'Elena Rostova',
-    'BACKUP-09',
-    'SECURITY',
-    'loc-transit',
-    'AVAILABLE',
-    null,
-    2,
-    1,
-    now
-  );
-
-  // 4. One Simulated Incident
+  // 4. Comprehensive Phase-1 Incidents (20 realistic public safety events)
   const incStmt = db.prepare(`
     INSERT OR REPLACE INTO incidents (
       id, title, description, category, location_id, zone, priority, status,
@@ -280,37 +254,292 @@ export function seedDemoData(): { message: string; counts: Record<string, number
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  const demoAiAnalysis = {
-    summary: 'Minor pedestrian slip reported near Platform 1 escalator. No structural hazard observed.',
-    suggested_category: 'MEDICAL_MINOR',
-    suggested_priority: 'LOW',
-    missing_information: ['Specific escalator bank identifier', 'Injured party mobility status'],
-    reasoning: 'Non-life-threatening injury in busy transit corridor; requires basic first aid and wet floor assessment.',
-    source: 'RULE_BASED_FALLBACK',
-  };
+  const timelineStmt = db.prepare(`
+    INSERT OR REPLACE INTO incident_timeline (id, incident_id, from_status, to_status, actor, notes, timestamp)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `);
 
-  incStmt.run(
-    'inc-demo-101',
-    'Minor slip and fall near escalator',
-    'Commuter slipped on damp surface near Platform 1 escalator. Alert and conscious, complaining of minor knee bruise.',
-    'MEDICAL_FIRST_AID',
-    'loc-transit',
-    'Platform 1-2',
-    'LOW',
-    'ACKNOWLEDGED',
-    1, // is_simulation: 1
-    null,
-    JSON.stringify(demoAiAnalysis),
-    now,
-    now,
-    null,
-    null,
-    'operator-demo',
-    now,
-    now
-  );
+  const DEMO_INCIDENTS = [
+    {
+      id: 'inc-101',
+      title: 'Platform escalator mechanical jam & crowd surge',
+      description: 'Sudden stoppage on Platform 1-2 up-escalator during morning peak. Passenger backlog forming rapidly on concourse.',
+      category: 'CROWD_SURGE',
+      location_id: 'loc-transit',
+      zone: 'Platform 1-2',
+      priority: 'HIGH',
+      status: 'IN_PROGRESS',
+      assigned_responder_id: 'resp-security-1',
+      summary: 'Potential crushing hazard in restricted transit corridor. Immediate crowd diversion required.',
+    },
+    {
+      id: 'inc-102',
+      title: 'Minor pedestrian slip near Platform 1 escalator',
+      description: 'Commuter slipped on damp surface. Alert and conscious, complaining of minor knee bruise.',
+      category: 'MEDICAL_FIRST_AID',
+      location_id: 'loc-transit',
+      zone: 'Platform 1-2',
+      priority: 'LOW',
+      status: 'ACKNOWLEDGED',
+      assigned_responder_id: null,
+      summary: 'Non-life-threatening injury. Basic first aid and floor drying required.',
+    },
+    {
+      id: 'inc-103',
+      title: 'Water pipe rupture in Science Block basement',
+      description: 'High pressure cold water line burst near chemistry storage. Water accumulation rising toward utility conduits.',
+      category: 'INFRASTRUCTURE_HAZARD',
+      location_id: 'loc-campus',
+      zone: 'Science Block',
+      priority: 'CRITICAL',
+      status: 'ASSIGNED',
+      assigned_responder_id: 'resp-campus-1',
+      summary: 'Critical structural risk to electrical distribution. Facilities dispatch dispatched immediately.',
+    },
+    {
+      id: 'inc-104',
+      title: 'Electrical short circuit odor in Student Union',
+      description: 'Acrid burning smell reported near second floor student lounge ventilation intake.',
+      category: 'FIRE_HAZARD',
+      location_id: 'loc-campus',
+      zone: 'Student Union',
+      priority: 'HIGH',
+      status: 'REPORTED',
+      assigned_responder_id: null,
+      summary: 'Electrical insulation failure suspected. Pre-evacuation inspection pending.',
+    },
+    {
+      id: 'inc-105',
+      title: 'Unattended baggage near Central Bazaar crossing',
+      description: 'Large black duffel bag left unattended beside Produce Arcade information kiosk for over 25 minutes.',
+      category: 'SECURITY_PATROL',
+      location_id: 'loc-market',
+      zone: 'Central Bazaar',
+      priority: 'HIGH',
+      status: 'IN_PROGRESS',
+      assigned_responder_id: 'resp-market-1',
+      summary: 'Unattended parcel in high-footfall zone. Security perimeter established for K9 assessment.',
+    },
+    {
+      id: 'inc-106',
+      title: 'Dehydration and fainting near Library Plaza',
+      description: 'Undergraduate student collapsed during outdoor career fair in direct sunlight. Responsive to sternal rub.',
+      category: 'MEDICAL_FIRST_AID',
+      location_id: 'loc-campus',
+      zone: 'Library Plaza',
+      priority: 'MEDIUM',
+      status: 'RESOLVED',
+      assigned_responder_id: 'resp-campus-2',
+      summary: 'Patient treated with electrolyte hydration. Vitals normalized, released to student health.',
+    },
+    {
+      id: 'inc-107',
+      title: 'Vehicular delivery congestion in South Parking Lane',
+      description: 'Three freight delivery trucks blocking emergency fire turnaround lane in south lot.',
+      category: 'TRAFFIC_CONGESTION',
+      location_id: 'loc-market',
+      zone: 'South Parking Lane',
+      priority: 'MEDIUM',
+      status: 'REPORTED',
+      assigned_responder_id: null,
+      summary: 'Emergency ingress obstruction. Traffic coordination alert generated.',
+    },
+    {
+      id: 'inc-108',
+      title: 'Power grid voltage fluctuation in Metro Concourse',
+      description: 'Flickering overhead emergency lighting and automated fare gate resets across concourse west turnstiles.',
+      category: 'INFRASTRUCTURE_HAZARD',
+      location_id: 'loc-transit',
+      zone: 'Metro Concourse',
+      priority: 'HIGH',
+      status: 'IN_PROGRESS',
+      assigned_responder_id: 'resp-backup-1',
+      summary: 'Transit power sub-panel brownout. Manual turnstile bypass activated.',
+    },
+    {
+      id: 'inc-109',
+      title: 'Elderly shopper shortness of breath in Produce Arcade',
+      description: 'Senior patron experiencing mild respiratory distress and dizziness near central fountain.',
+      category: 'MEDICAL_FIRST_AID',
+      location_id: 'loc-market',
+      zone: 'Produce Arcade',
+      priority: 'HIGH',
+      status: 'ASSIGNED',
+      assigned_responder_id: null,
+      summary: 'Priority medical assessment dispatched. Oxygen canister unit in transit.',
+    },
+    {
+      id: 'inc-110',
+      title: 'Campus North Quad gate emergency sensor offline',
+      description: 'Perimeter beam sensor loop reporting intermittent loss of telemetry during student influx.',
+      category: 'INFRASTRUCTURE_HAZARD',
+      location_id: 'loc-campus',
+      zone: 'North Quad',
+      priority: 'LOW',
+      status: 'REPORTED',
+      assigned_responder_id: null,
+      summary: 'Sensor battery degradation suspected. Physical security backup assigned.',
+    },
+    {
+      id: 'inc-111',
+      title: 'Bus Bay East lane barrier malfunction',
+      description: 'Automated pneumatic bollard jammed at 45 degree angle, preventing standard transit bus departures.',
+      category: 'TRAFFIC_CONGESTION',
+      location_id: 'loc-transit',
+      zone: 'Bus Bay East',
+      priority: 'MEDIUM',
+      status: 'ACKNOWLEDGED',
+      assigned_responder_id: null,
+      summary: 'Surface transit delay alert propagated to dispatch hub.',
+    },
+    {
+      id: 'inc-112',
+      title: 'Chemical reagent spill in Science Block laboratory 302',
+      description: '2 liters of dilute cleaning solvent spilled onto chemical-resistant flooring. Fume hood operating normally.',
+      category: 'INFRASTRUCTURE_HAZARD',
+      location_id: 'loc-campus',
+      zone: 'Science Block',
+      priority: 'HIGH',
+      status: 'RESOLVED',
+      assigned_responder_id: 'resp-campus-1',
+      summary: 'Neutralization powder applied. Room ventilated and verified safe by EHS.',
+    },
+    {
+      id: 'inc-113',
+      title: 'Ticket Hall fare kiosk tamper alert',
+      description: 'Anti-tamper vibration sensor triggered on central ticket terminal #4.',
+      category: 'SECURITY_PATROL',
+      location_id: 'loc-transit',
+      zone: 'Ticket Hall',
+      priority: 'MEDIUM',
+      status: 'REPORTED',
+      assigned_responder_id: null,
+      summary: 'Physical inspection dispatched to rule out coin box tampering.',
+    },
+    {
+      id: 'inc-114',
+      title: 'Heat exhaustion during afternoon market rush',
+      description: 'Market employee reported feeling dizzy with severe muscle cramps near vendor stall 14.',
+      category: 'MEDICAL_FIRST_AID',
+      location_id: 'loc-market',
+      zone: 'Central Bazaar',
+      priority: 'MEDIUM',
+      status: 'RESOLVED',
+      assigned_responder_id: null,
+      summary: 'Treated on scene with cold packs and hydration. Returned to light duties.',
+    },
+    {
+      id: 'inc-115',
+      title: 'Taxi Stand queue disturbance & unauthorized access',
+      description: 'Unpermitted commercial vehicle attempting to bypass queue barriers near transit dispatch booth.',
+      category: 'SECURITY_PATROL',
+      location_id: 'loc-transit',
+      zone: 'Taxi Stand',
+      priority: 'LOW',
+      status: 'ACKNOWLEDGED',
+      assigned_responder_id: null,
+      summary: 'Operator monitoring CCTV; verbal compliance achieved.',
+    },
+    {
+      id: 'inc-116',
+      title: 'Trash receptacle smoldering near Student Union patio',
+      description: 'Small smoke plume emanating from exterior metal waste bin. Extinguished with water canister, assessing container.',
+      category: 'FIRE_HAZARD',
+      location_id: 'loc-campus',
+      zone: 'Student Union',
+      priority: 'LOW',
+      status: 'RESOLVED',
+      assigned_responder_id: null,
+      summary: 'Cigarette discard identified as ignition source. No structural exposure.',
+    },
+    {
+      id: 'inc-117',
+      title: 'Crowd surge at Central Bazaar evening festival',
+      description: 'Unexpected pedestrian bottleneck at east pedestrian archway following festival stage performance.',
+      category: 'CROWD_SURGE',
+      location_id: 'loc-market',
+      zone: 'Central Bazaar',
+      priority: 'CRITICAL',
+      status: 'IN_PROGRESS',
+      assigned_responder_id: 'resp-market-1',
+      summary: 'Secondary exit gates opened. Crowd flow stabilizing under directional marshaling.',
+    },
+    {
+      id: 'inc-118',
+      title: 'Elevator emergency telephone offline in Science Block',
+      description: 'Routine automated telemetry ping failed for Science Block elevator car 2.',
+      category: 'INFRASTRUCTURE_HAZARD',
+      location_id: 'loc-campus',
+      zone: 'Science Block',
+      priority: 'LOW',
+      status: 'REPORTED',
+      assigned_responder_id: null,
+      summary: 'Car grounded to lobby pending intercom diagnostics.',
+    },
+    {
+      id: 'inc-119',
+      title: 'Transit concourse shattered display glass',
+      description: 'Impact fractured advertising display panel near western turnstiles. Shards contained, area cordoned.',
+      category: 'SECURITY_PATROL',
+      location_id: 'loc-transit',
+      zone: 'Metro Concourse',
+      priority: 'LOW',
+      status: 'RESOLVED',
+      assigned_responder_id: 'resp-security-1',
+      summary: 'Debris swept and boarded. Safe pedestrian passage re-established.',
+    },
+    {
+      id: 'inc-120',
+      title: 'Produce Arcade refrigeration drainage overflow',
+      description: 'Commercial walk-in cooler condensation line overflowed into customer walkway lane.',
+      category: 'INFRASTRUCTURE_HAZARD',
+      location_id: 'loc-market',
+      zone: 'Produce Arcade',
+      priority: 'LOW',
+      status: 'ACKNOWLEDGED',
+      assigned_responder_id: null,
+      summary: 'Maintenance notified; caution signs positioned.',
+    }
+  ];
 
-  // 5. One Baseline Failed Scenario Run (SCN-001 under Rule v1.0)
+  for (const inc of DEMO_INCIDENTS) {
+    const aiAnalysis = {
+      summary: inc.summary,
+      suggested_category: inc.category,
+      suggested_priority: inc.priority,
+      missing_information: [],
+      reasoning: 'Autonomous procedural triage and rule validation verified.',
+      source: 'RULE_BASED_FALLBACK',
+    };
+
+    incStmt.run(
+      inc.id,
+      inc.title,
+      inc.description,
+      inc.category,
+      inc.location_id,
+      inc.zone,
+      inc.priority,
+      inc.status,
+      1,
+      inc.assigned_responder_id,
+      JSON.stringify(aiAnalysis),
+      now,
+      inc.status !== 'REPORTED' ? now : null,
+      inc.status === 'ASSIGNED' || inc.status === 'IN_PROGRESS' || inc.status === 'RESOLVED' ? now : null,
+      inc.status === 'RESOLVED' ? now : null,
+      'operator-demo',
+      now,
+      now
+    );
+
+    timelineStmt.run(`tl-${inc.id}-1`, inc.id, null, 'REPORTED', 'system', 'Initial incident telemetry received', now);
+    if (inc.status !== 'REPORTED') {
+      timelineStmt.run(`tl-${inc.id}-2`, inc.id, 'REPORTED', inc.status, 'operator-demo', `Status transitioned to ${inc.status}`, now);
+    }
+  }
+
+  // 5. Baseline Historical Scenario Runs (Demonstrating testing & improvement)
   const runStmt = db.prepare(`
     INSERT OR REPLACE INTO scenario_runs (
       id, scenario_id, rule_version, status, started_at, completed_at,
@@ -326,17 +555,12 @@ export function seedDemoData(): { message: string; counts: Record<string, number
     { id: 'chk-4', name: 'Audit Integrity', passed: true, expected: 'Record test event', observed: 'Audit record written: AUD-RUN-001' },
   ];
 
-  const gapsBaseline = [
-    'Workflow lacks automated failover trigger when primary unit is UNAVAILABLE',
-    'Supervisor notification bypasses unattended assignment stalls',
+  const checksVerified = [
+    { id: 'chk-1', name: 'Identify Primary Unavailability', passed: true, expected: 'Primary responder offline detected', observed: 'Status UNAVAILABLE identified in 12ms' },
+    { id: 'chk-2', name: 'Secondary Unit Selection', passed: true, expected: 'Auto-select qualified secondary responder', observed: 'Backup unit resp-backup-1 selected automatically' },
+    { id: 'chk-3', name: 'Supervisor Notification', passed: true, expected: 'Supervisor queue escalation event', observed: 'Supervisor escalation token ESC-881 dispatched' },
+    { id: 'chk-4', name: 'Audit Integrity', passed: true, expected: 'Record test event', observed: 'Audit trail verified with HMAC seal' },
   ];
-
-  const aiExplanationBaseline = {
-    summary: 'Scenario failed because rule configuration v1.0 has auto_fallback_enabled set to false.',
-    root_cause: 'Missing automated failover routing definition in transit sector dispatch matrix.',
-    recommended_action: 'Enable secondary responder fallback and configure supervisor escalation timeout.',
-    source: 'DETERMINISTIC_EVALUATOR',
-  };
 
   runStmt.run(
     'run-base-001',
@@ -349,12 +573,28 @@ export function seedDemoData(): { message: string; counts: Record<string, number
     JSON.stringify(checksBaseline),
     2,
     4,
-    JSON.stringify(gapsBaseline),
-    JSON.stringify(aiExplanationBaseline),
+    JSON.stringify(['Workflow lacks automated failover trigger when primary unit is UNAVAILABLE', 'Supervisor notification bypasses unattended stalls']),
+    JSON.stringify({ summary: 'Failed under Rule v1.0 due to disabled automated failover.', root_cause: 'Missing automated failover definition in dispatch matrix.', recommended_action: 'Upgrade to Rule v2.0.', source: 'DETERMINISTIC_EVALUATOR' }),
     'system-demo'
   );
 
-  // 6. One Linked Corrective Action
+  runStmt.run(
+    'run-verif-001',
+    'scn-unavail-resp',
+    'v2.0',
+    'PASSED',
+    now,
+    now,
+    980,
+    JSON.stringify(checksVerified),
+    4,
+    4,
+    JSON.stringify([]),
+    JSON.stringify({ summary: 'All 4 verification gates passed under Rule v2.0 with active failover routing.', root_cause: 'None. Procedural compliance 100%.', recommended_action: 'Procedure verified.', source: 'DETERMINISTIC_EVALUATOR' }),
+    'admin-1'
+  );
+
+  // 6. Linked Actionable Corrective Actions
   const caStmt = db.prepare(`
     INSERT OR REPLACE INTO corrective_actions (
       id, title, weakness_description, source_run_id, proposed_remedy,
@@ -375,14 +615,33 @@ export function seedDemoData(): { message: string; counts: Record<string, number
     'OPEN',
     'scn-unavail-resp',
     null,
-    'Awaiting rule configuration update and verification re-run.',
+    'Awaiting deployment in secondary terminal zones.',
     null,
     null,
     now,
     now
   );
 
-  // 7. Initial Audit Log Entry
+  caStmt.run(
+    'ca-002',
+    'Standardize Transit Sector Evacuation Handoff Protocol',
+    'Procedural gap identified during multi-unit staging simulation at metro concourse.',
+    'run-base-001',
+    'Enact Rule v2.0 secondary routing matrix with automatic supervisor alert.',
+    'Operations Lead Vance',
+    'HIGH',
+    new Date(Date.now() + 86400000 * 14).toISOString().split('T')[0],
+    'VERIFIED',
+    'scn-unavail-resp',
+    'run-verif-001',
+    'Proven passing under test run-verif-001.',
+    now,
+    'admin-1',
+    now,
+    now
+  );
+
+  // 7. Initial Audit Log Entries
   const auditStmt = db.prepare(`
     INSERT OR REPLACE INTO audit_logs (
       id, timestamp, actor_id, actor_role, action_type, entity_type, entity_id, details_json
@@ -397,18 +656,18 @@ export function seedDemoData(): { message: string; counts: Record<string, number
     'SYSTEM_DEMO_SEED',
     'SYSTEM',
     'all',
-    JSON.stringify({ note: 'Seeded minimal demonstration dataset' })
+    JSON.stringify({ note: 'Seeded comprehensive Phase-1 operational intelligence dataset', total_incidents: DEMO_INCIDENTS.length })
   );
 
   return {
-    message: 'Demo dataset successfully seeded.',
+    message: 'Phase-1 operational network successfully initialized.',
     counts: {
       locations: 3,
-      responders: 3,
-      incidents: 1,
+      responders: DEMO_RESPONDERS.length,
+      incidents: DEMO_INCIDENTS.length,
       scenarios: 5,
-      scenario_runs: 1,
-      corrective_actions: 1,
+      scenario_runs: 2,
+      corrective_actions: 2,
     }
   };
 }
@@ -418,11 +677,13 @@ export function clearDemoData(): { message: string } {
 
   db.exec(`
     DELETE FROM audit_logs WHERE actor_id = 'system-seed';
-    DELETE FROM corrective_actions WHERE id = 'ca-001';
-    DELETE FROM scenario_runs WHERE id = 'run-base-001';
-    DELETE FROM incidents WHERE id = 'inc-demo-101';
-    DELETE FROM responders WHERE id IN ('resp-security-1', 'resp-med-1', 'resp-backup-1');
+    DELETE FROM corrective_actions WHERE id IN ('ca-001', 'ca-002');
+    DELETE FROM scenario_runs WHERE id IN ('run-base-001', 'run-verif-001');
+    DELETE FROM incident_timeline WHERE actor = 'system' OR actor = 'operator-demo';
+    DELETE FROM incidents WHERE is_simulation = 1;
+    DELETE FROM responders WHERE is_simulated = 1;
   `);
 
   return { message: 'Demo dataset removed safely.' };
 }
+
